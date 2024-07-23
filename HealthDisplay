@@ -28,6 +28,9 @@ local function updateHealthDisplay(character)
 
     humanoid.HealthChanged:Connect(function(health)
         textLabel.Text = "HP: " .. math.ceil(health)
+        if health <= 0 then
+            character:BreakJoints() -- This resets the character
+        end
     end)
 
     -- Initialize the text
