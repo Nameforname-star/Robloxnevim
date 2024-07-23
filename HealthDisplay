@@ -1,0 +1,42 @@
+-- LocalScript in StarterCharacterScripts
+
+local function createBillboardGui(character)
+    local billboardGui = Instance.new("BillboardGui")
+    billboardGui.Name = "HealthDisplay"
+    billboardGui.Adornee = character:WaitForChild("Head")
+    billboardGui.Size = UDim2.new(2, 0, 2, 0)
+    billboardGui.StudsOffset = Vector3.new(0, 2, 0)
+
+    local textLabel = Instance.new("TextLabel")
+    textLabel.Size = UDim2.new(1, 0, 1, 0)
+    textLabel.BackgroundTransparency = 1
+    textLabel.TextColor3 = Color3.new(1, 0, 0)
+    textLabel.TextScaled = true
+    textLabel.Parent = billboardGui
+
+    billboardGui.Parent = character
+    return textLabel
+end
+
+local function updateHealthDisplay(player)
+    local character = player.Character or player.CharacterAdded:Wait()
+    local humanoid = character:WaitForChild("Humanoid")
+
+    local textLabel = character:FindFirstChild("HealthDisplay") and character.HealthDisplay:FindFirstChild("TextLabel")
+    if not textLabel then
+        textLabel = createBillboardGui(character)
+    end
+
+    humanoid.HealthChanged:Connect(function(health)
+        textLabel.Text = "HP: " .. math.ceil(health)
+    end)
+
+    -- Initialize the text
+    textLabel.Text = "HP: " .. math.ceil(humanoid.Health)
+end
+
+game.Players.PlayerAdded:Connect(function(player)
+    player.CharacterAdded:Connect(function()
+        updateHealthDisplay(player)
+    end)
+end)
