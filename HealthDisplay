@@ -18,8 +18,7 @@ local function createBillboardGui(character)
     return textLabel
 end
 
-local function updateHealthDisplay(player)
-    local character = player.Character or player.CharacterAdded:Wait()
+local function updateHealthDisplay(character)
     local humanoid = character:WaitForChild("Humanoid")
 
     local textLabel = character:FindFirstChild("HealthDisplay") and character.HealthDisplay:FindFirstChild("TextLabel")
@@ -35,8 +34,14 @@ local function updateHealthDisplay(player)
     textLabel.Text = "HP: " .. math.ceil(humanoid.Health)
 end
 
+game.Players.LocalPlayer.CharacterAdded:Connect(updateHealthDisplay)
+if game.Players.LocalPlayer.Character then
+    updateHealthDisplay(game.Players.LocalPlayer.Character)
+end
+
 game.Players.PlayerAdded:Connect(function(player)
-    player.CharacterAdded:Connect(function()
-        updateHealthDisplay(player)
-    end)
+    player.CharacterAdded:Connect(updateHealthDisplay)
+    if player.Character then
+        updateHealthDisplay(player.Character)
+    end
 end)
